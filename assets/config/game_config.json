@@ -1,0 +1,50 @@
+{
+  "playerConfig": {
+    "x": 100,
+    "y": 200,
+    "width": 32,
+    "height": 32,
+    "health": 100,
+    "speed": 200
+  },
+  "enemyConfigs": [
+    {
+      "x": 300,
+      "y": 200,
+      "width": 24,
+      "height": 24,
+      "health": 50,
+      "speed": 100,
+      "aiType": "patrol",
+      "detectionRange": 150,
+      "attackRange": 30
+    },
+    {
+      "x": 500,
+      "y": 200,
+      "width": 24,
+      "height": 24,
+      "health": 75,
+      "speed": 150,
+      "aiType": "chase",
+      "detectionRange": 200,
+      "attackRange": 40
+    },
+    {
+      "x": 700,
+      "y": 200,
+      "width": 24,
+      "height": 24,
+      "health": 30,
+      "speed": 80,
+      "aiType": "stationary",
+      "detectionRange": 100,
+      "attackRange": 50
+    }
+  ],
+  "mapConfig": {
+    "tmxFile": "maps/level1.tmx",
+    "tileSize": 16,
+    "layersToRender": ["ground", "objects", "decorations"]
+  }
+}

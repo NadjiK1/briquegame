@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="50" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="16">
+ <objectgroup id="2" name="bricks">
+  <!-- Row 1 -->
+  <object id="1" x="64" y="64" width="64" height="32"/>
+  <object id="2" x="160" y="64" width="64" height="32"/>
+  <object id="3" x="256" y="64" width="64" height="32"/>
+  <object id="4" x="352" y="64" width="64" height="32"/>
+  <object id="5" x="448" y="64" width="64" height="32"/>
+  
+  <!-- Row 2 -->
+  <object id="6" x="64" y="128" width="64" height="32"/>
+  <object id="7" x="160" y="128" width="64" height="32"/>
+  <object id="8" x="256" y="128" width="64" height="32"/>
+  <object id="9" x="352" y="128" width="64" height="32"/>
+  <object id="10" x="448" y="128" width="64" height="32"/>
+  
+
+ </objectgroup>
+</map>

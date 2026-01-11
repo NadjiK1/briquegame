@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="50" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="21">
+ <objectgroup id="2" name="bricks">
+  <!-- Row 1 -->
+  <object id="1" x="64" y="64" width="64" height="32"/>
+  <object id="2" x="160" y="64" width="64" height="32"/>
+  <object id="3" x="256" y="64" width="64" height="32"/>
+  <object id="4" x="352" y="64" width="64" height="32"/>
+  <object id="5" x="448" y="64" width="64" height="32"/>
+  <object id="6" x="544" y="64" width="64" height="32"/>
+  <object id="7" x="640" y="64" width="64" height="32"/>
+  
+  <!-- Row 2 -->
+  <object id="8" x="96" y="112" width="64" height="32"/>
+  <object id="9" x="192" y="112" width="64" height="32"/>
+  <object id="10" x="288" y="112" width="64" height="32"/>
+  <object id="11" x="384" y="112" width="64" height="32"/>
+  <object id="12" x="480" y="112" width="64" height="32"/>
+  <object id="13" x="576" y="112" width="64" height="32"/>
+  
+  <!-- Row 3 -->
+  <object id="14" x="64" y="160" width="64" height="32"/>
+  <object id="15" x="160" y="160" width="64" height="32"/>
+  <object id="16" x="256" y="160" width="64" height="32"/>
+  <object id="17" x="352" y="160" width="64" height="32"/>
+  <object id="18" x="448" y="160" width="64" height="32"/>
+  <object id="19" x="544" y="160" width="64" height="32"/>
+  <object id="20" x="640" y="160" width="64" height="32"/>
+ </objectgroup>
+</map>

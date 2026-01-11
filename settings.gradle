@@ -1,0 +1,2 @@
+rootProject.name = 'briquegame'
+include 'lwjgl3', 'core'
