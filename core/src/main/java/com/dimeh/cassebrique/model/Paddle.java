@@ -9,13 +9,13 @@ public class Paddle extends GameObject {
     public Paddle() {
         super(
                 (GameConfig.WORLD_WIDTH - GameConfig.PADDLE_WIDTH) / 2,
-                20f, // Initial Y position
+                20f, // Position Y initiale
                 GameConfig.PADDLE_WIDTH,
                 GameConfig.PADDLE_HEIGHT);
     }
 
     public void update(float delta, float targetX) {
-        // Mouse control: direct positioning
+        // Contrôle souris : positionnement direct
         float newX = targetX - (bounds.width / 2);
         setPositionX(newX);
     }

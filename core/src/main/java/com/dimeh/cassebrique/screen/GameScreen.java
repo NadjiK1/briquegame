@@ -42,13 +42,17 @@ public class GameScreen extends ScreenAdapter {
     private TiledMap tiledMap;
     private int currentLevel = 1;
 
-    // Game state for lives and score
+    // État du jeu pour les vies et le score
     private GameState gameState;
     private BitmapFont font;
 
     private float startTimer = 0f;
 
-    // Level Transition
+    // Input mode tracking - pour éviter le conflit clavier/souris
+    private boolean usingKeyboard = false;
+    private float lastMouseX = -1f;
+
+    // Transition de niveau
     private boolean isLevelStarting = false;
     private float levelStartTimer = 0f;
     private String levelText = "";
@@ -64,11 +68,11 @@ public class GameScreen extends ScreenAdapter {
         viewport = new FitViewport(GameConfig.WORLD_WIDTH, GameConfig.WORLD_HEIGHT, camera);
         shapeRenderer = new ShapeRenderer();
 
-        // Initialize game state
+        // Initialiser l'état du jeu
         gameState = new GameState();
-        startTimer = 0f; // Reset timer
+        startTimer = 0f; // Réinitialiser le minuteur
 
-        // Initialize font for HUD
+        // Initialiser la police pour l'interface
         font = new BitmapFont();
         font.getData().setScale(1.5f);
         font.setColor(Color.WHITE);
@@ -90,7 +94,7 @@ public class GameScreen extends ScreenAdapter {
         }
         loadLevel("maps/level" + currentLevel + ".tmx");
 
-        // Trigger Level Announcement
+        // Déclencher l'annonce du niveau
         isLevelStarting = true;
         levelStartTimer = 0f;
         levelText = "LEVEL " + currentLevel;
@@ -99,7 +103,7 @@ public class GameScreen extends ScreenAdapter {
     private void loadLevel(String mapPath) {
         bricks = new ArrayList<>();
 
-        // Load the map
+        // Charger la carte
         try {
             tiledMap = new TmxMapLoader().load(mapPath);
             // Parcourir TOUS les calques pour trouver des briques
@@ -129,12 +133,12 @@ public class GameScreen extends ScreenAdapter {
             }
         } catch (Exception e) {
             Gdx.app.error("GameScreen", "Could not load map: " + mapPath, e);
-            // Fallback to default bricks if map fails? Or just crash/empty.
-            // For now, let's just properly log.
+            // Utiliser des briques par défaut si la carte échoue ? Ou planter/vide.
+            // Pour l'instant, on se contente de bien logger.
         }
     }
 
-    // Reusable vector to avoid garbage collection
+    // Vecteur réutilisable pour éviter le ramasse-miettes
     private final com.badlogic.gdx.math.Vector3 tempVector = new com.badlogic.gdx.math.Vector3();
 
     @Override
@@ -148,49 +152,55 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void update(float delta) {
-        // Level Transition Logic
+        // Logique de transition de niveau
         if (isLevelStarting) {
             levelStartTimer += delta;
             if (levelStartTimer > 2f) {
                 isLevelStarting = false;
             }
-            return; // Pause game during announcement
+            return; // Mettre le jeu en pause pendant l'annonce
         }
 
-        // Input handling
-        boolean inputHandled = false;
+        // Input handling - Gestion améliorée clavier/souris
 
-        // Keyboard control
+        // Contrôle clavier
         if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.LEFT)
                 || Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.Q)) {
             paddle.moveLeft(delta);
-            inputHandled = true;
+            usingKeyboard = true;
         }
         if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.RIGHT)
                 || Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.D)) {
             paddle.moveRight(delta);
-            inputHandled = true;
+            usingKeyboard = true;
         }
 
-        // Mouse control (only if no keyboard input to avoid conflict)
-        if (!inputHandled) {
-            // Convert screen coordinates to world coordinates
-            tempVector.set(Gdx.input.getX(), Gdx.input.getY(), 0); // Corrected getY usage
-            viewport.unproject(tempVector);
+        // Mouse control - seulement si la souris a réellement bougé
+        tempVector.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+        viewport.unproject(tempVector);
+
+        // Détecter si la souris a bougé (avec une petite tolérance)
+        if (lastMouseX >= 0 && Math.abs(tempVector.x - lastMouseX) > 2f) {
+            usingKeyboard = false; // Revenir au mode souris seulement si la souris bouge
+        }
+        lastMouseX = tempVector.x;
+
+        // Appliquer le contrôle souris seulement si on n'utilise pas le clavier
+        if (!usingKeyboard) {
             paddle.update(delta, tempVector.x);
         }
 
-        // Logic to prevent immediate launch on screen switch
+        // Logique pour empêcher le lancement immédiat lors du changement d'écran
         if (startTimer < 0.5f) {
             startTimer += delta;
-            // Force ball position to paddle while waiting
+            // Forcer la position de la balle sur la raquette pendant l'attente
             ball.setPosition(
                     paddle.getX() + (paddle.getWidth() - ball.getWidth()) / 2,
                     paddle.getY() + paddle.getHeight() + 2);
             return;
         }
 
-        // Ball logic
+        // Logique de la balle
         if (!ball.isActive()) {
             ball.setPosition(
                     paddle.getX() + (paddle.getWidth() - ball.getWidth()) / 2,
@@ -208,12 +218,12 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void checkCollisions() {
-        // Ball vs Paddle
+        // Balle contre Raquette
         if (Intersector.overlaps(ball.getBounds(), paddle.getBounds())) {
             Rectangle ballRect = ball.getBounds();
             Rectangle paddleRect = paddle.getBounds();
 
-            // Calculate overlap to determine collision side
+            // Calculer le chevauchement pour déterminer le côté de la collision
             float ballCenterX = ballRect.x + ballRect.width / 2;
             float ballCenterY = ballRect.y + ballRect.height / 2;
             float paddleCenterX = paddleRect.x + paddleRect.width / 2;
@@ -223,13 +233,13 @@ public class GameScreen extends ScreenAdapter {
             float overlapY = (ballRect.height / 2 + paddleRect.height / 2) - Math.abs(ballCenterY - paddleCenterY);
 
             if (overlapY < overlapX) {
-                // Top/bottom collision - reverse Y velocity
+                // Collision haut/bas - inverser la vélocité Y
                 if (ball.getVelocityY() < 0) {
                     ball.reverseY();
                     ball.setPosition(ball.getX(), paddle.getY() + paddle.getHeight() + 1);
                 }
             } else {
-                // Side collision - reverse X velocity
+                // Collision latérale - inverser la vélocité X
                 ball.reverseX();
                 if (ballCenterX < paddleCenterX) {
                     ball.setPosition(paddle.getX() - ball.getWidth() - 1, ball.getY());
@@ -238,12 +248,12 @@ public class GameScreen extends ScreenAdapter {
                 }
             }
 
-            // Add english based on hit position
+            // Ajouter de l'effet basé sur la position de frappe
             float hitFactor = (ballCenterX - paddleCenterX) / (paddle.getWidth() / 2);
             ball.setVelocityX(ball.getVelocityX() + hitFactor * 100);
         }
 
-        // Ball vs Bricks
+        // Balle contre Briques
         Iterator<Brick> iter = bricks.iterator();
         while (iter.hasNext()) {
             Brick brick = iter.next();
@@ -255,7 +265,7 @@ public class GameScreen extends ScreenAdapter {
                     iter.remove(); // Détruire brique si 0 vies
                     gameState.addBrickScore();
                 }
-                break; // Only hit one brick per frame to prevent weird physics for now
+                break; // Ne toucher qu'une brique par frame pour éviter une physique bizarre
             }
         }
     }
@@ -263,24 +273,24 @@ public class GameScreen extends ScreenAdapter {
     private void checkGameOver() {
         if (ball.getY() < 0) {
             Gdx.app.log("GameScreen", "Ball died at Y=" + ball.getY());
-            gameState.loseLife(); // Lose a life
+            gameState.loseLife(); // Perdre une vie
 
             if (gameState.isGameOver()) {
-                // Transition to Game Over screen
+                // Transition vers l'écran Game Over
                 game.setScreen(new GameOverScreen(game, gameState.getScore()));
                 return;
             }
 
-            ball.reset(); // Reset ball position
+            ball.reset(); // Réinitialiser la position de la balle
         }
 
         if (bricks.isEmpty()) {
-            // Level complete
+            // Niveau terminé
             Gdx.app.log("GameScreen", "Level " + currentLevel + " Complete!");
             currentLevel++;
             loadCurrentLevel();
             ball.reset();
-            // Reset timer to prevent instant launch
+            // Réinitialiser le minuteur pour empêcher le lancement instantané
             startTimer = 0f;
         }
     }
@@ -292,15 +302,15 @@ public class GameScreen extends ScreenAdapter {
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        // Draw Paddle
+        // Dessiner la Raquette
         shapeRenderer.setColor(Color.BLUE);
         shapeRenderer.rect(paddle.getX(), paddle.getY(), paddle.getWidth(), paddle.getHeight());
 
-        // Draw Ball
+        // Dessiner la Balle
         shapeRenderer.setColor(Color.WHITE);
         shapeRenderer.rect(ball.getX(), ball.getY(), ball.getWidth(), ball.getHeight());
 
-        // Draw Bricks
+        // Dessiner les Briques
         for (Brick brick : bricks) {
             // Couleur basée sur les VIES restantes (Visual feedback !)
             if (brick.getVies() >= 3) {
@@ -315,7 +325,7 @@ public class GameScreen extends ScreenAdapter {
 
         shapeRenderer.end();
 
-        // Draw HUD (score and lives)
+        // Dessiner l'interface (score et vies)
         drawHUD();
 
         if (isLevelStarting) {
@@ -327,7 +337,7 @@ public class GameScreen extends ScreenAdapter {
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
 
-        // Re-use font but scale it up temporarily
+        // Réutiliser la police mais l'agrandir temporairement
         float oldScaleX = font.getData().scaleX;
         float oldScaleY = font.getData().scaleY;
         font.getData().setScale(3f);
@@ -339,7 +349,7 @@ public class GameScreen extends ScreenAdapter {
 
         font.draw(game.batch, levelText, x, y);
 
-        // Restore scale
+        // Restaurer l'échelle
         font.getData().setScale(oldScaleX, oldScaleY);
 
         game.batch.end();
@@ -349,10 +359,10 @@ public class GameScreen extends ScreenAdapter {
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
 
-        // Draw score on left
+        // Dessiner le score à gauche
         font.draw(game.batch, "Score: " + gameState.getScore(), 20, GameConfig.WORLD_HEIGHT - 15);
 
-        // Draw lives on right
+        // Dessiner les vies à droite
         String livesText = "Vies: " + gameState.getLives();
         font.draw(game.batch, livesText, GameConfig.WORLD_WIDTH - 120, GameConfig.WORLD_HEIGHT - 15);
 

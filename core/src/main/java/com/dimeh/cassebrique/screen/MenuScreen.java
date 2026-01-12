@@ -15,7 +15,7 @@ import com.dimeh.cassebrique.CasseBriqueMain;
 import com.dimeh.cassebrique.config.GameConfig;
 
 /**
- * Main menu screen with title and play button.
+ * Écran du menu principal avec titre et bouton jouer.
  */
 public class MenuScreen extends ScreenAdapter {
 
@@ -50,7 +50,7 @@ public class MenuScreen extends ScreenAdapter {
 
         glyphLayout = new GlyphLayout();
 
-        // Play button centered
+        // Bouton Jouer centré
         float buttonWidth = 200f;
         float buttonHeight = 60f;
         float buttonX = (GameConfig.WORLD_WIDTH - buttonWidth) / 2;
@@ -62,15 +62,15 @@ public class MenuScreen extends ScreenAdapter {
     public void render(float delta) {
         update();
         if (game.getScreen() != this)
-            return; // Stop if screen changed/disposed
+            return; // Arrêter si l'écran a changé/été libéré
         draw();
     }
 
-    // Reusable vector
+    // Vecteur réutilisable
     private final com.badlogic.gdx.math.Vector3 tempVector = new com.badlogic.gdx.math.Vector3();
 
     private void update() {
-        // Check mouse hover over button
+        // Vérifier le survol du bouton par la souris
         tempVector.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         viewport.unproject(tempVector);
         float mouseX = tempVector.x;
@@ -78,7 +78,7 @@ public class MenuScreen extends ScreenAdapter {
 
         buttonHovered = playButton.contains(mouseX, mouseY);
 
-        // Handle click
+        // Gérer le clic
         if (Gdx.input.justTouched() && buttonHovered) {
             game.setScreen(new GameScreen(game));
             dispose();
@@ -91,7 +91,7 @@ public class MenuScreen extends ScreenAdapter {
 
         shapeRenderer.setProjectionMatrix(camera.combined);
 
-        // Draw button
+        // Dessiner le bouton
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         if (buttonHovered) {
@@ -103,23 +103,23 @@ public class MenuScreen extends ScreenAdapter {
 
         shapeRenderer.end();
 
-        // Draw button border
+        // Dessiner la bordure du bouton
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.WHITE);
         shapeRenderer.rect(playButton.x, playButton.y, playButton.width, playButton.height);
         shapeRenderer.end();
 
-        // Draw text
+        // Dessiner le texte
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
 
-        // Title
+        // Titre
         glyphLayout.setText(titleFont, "CASSE-BRIQUE");
         float titleX = (GameConfig.WORLD_WIDTH - glyphLayout.width) / 2;
         float titleY = GameConfig.WORLD_HEIGHT - 100f;
         titleFont.draw(game.batch, "CASSE-BRIQUE", titleX, titleY);
 
-        // Button text
+        // Texte du bouton
         glyphLayout.setText(buttonFont, "JOUER");
         float textX = playButton.x + (playButton.width - glyphLayout.width) / 2;
         float textY = playButton.y + (playButton.height + glyphLayout.height) / 2;

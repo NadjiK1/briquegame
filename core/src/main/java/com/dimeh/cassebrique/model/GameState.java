@@ -3,7 +3,7 @@ package com.dimeh.cassebrique.model;
 import com.dimeh.cassebrique.config.GameConfig;
 
 /**
- * Manages the global game state: lives, score, and game status.
+ * Gère l'état global du jeu : vies, score et statut de la partie.
  */
 public class GameState {
     private int lives;

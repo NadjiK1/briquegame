@@ -61,7 +61,7 @@ public class GameOverScreen extends ScreenAdapter {
 
         glyphLayout = new GlyphLayout();
 
-        // Bouttons
+        // Boutons
         float buttonWidth = 180f;
         float buttonHeight = 50f;
         float spacing = 30f;
@@ -77,11 +77,11 @@ public class GameOverScreen extends ScreenAdapter {
     public void render(float delta) {
         update();
         if (game.getScreen() != this)
-            return; // Stop if screen changed/disposed
+            return; // Arrêter si l'écran a changé/été libéré
         draw();
     }
 
-    // Reusable vector
+    // Vecteur réutilisable
     private final com.badlogic.gdx.math.Vector3 tempVector = new com.badlogic.gdx.math.Vector3();
 
     private void update() {
@@ -127,7 +127,7 @@ public class GameOverScreen extends ScreenAdapter {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        // Replay button
+        // Bouton Rejouer
         if (replayHovered) {
             shapeRenderer.setColor(0.2f, 0.7f, 0.3f, 1f);
         } else {
@@ -135,7 +135,7 @@ public class GameOverScreen extends ScreenAdapter {
         }
         shapeRenderer.rect(replayButton.x, replayButton.y, replayButton.width, replayButton.height);
 
-        // Menu button
+        // Bouton Menu
         if (menuHovered) {
             shapeRenderer.setColor(0.5f, 0.5f, 0.6f, 1f);
         } else {
@@ -145,37 +145,37 @@ public class GameOverScreen extends ScreenAdapter {
 
         shapeRenderer.end();
 
-        // Draw button borders
+        // Dessiner les bordures des boutons
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        // Draw actual hitbox in RED to debug
+        // Dessiner la vraie hitbox en ROUGE pour debug
         shapeRenderer.setColor(Color.RED);
         shapeRenderer.rect(replayButton.x, replayButton.y, replayButton.width, replayButton.height);
         shapeRenderer.rect(menuButton.x, menuButton.y, menuButton.width, menuButton.height);
 
-        // Draw nicer border on top
+        // Dessiner une plus jolie bordure par-dessus
         shapeRenderer.setColor(Color.WHITE);
         shapeRenderer.rect(replayButton.x, replayButton.y, replayButton.width, replayButton.height);
         shapeRenderer.rect(menuButton.x, menuButton.y, menuButton.width, menuButton.height);
         shapeRenderer.end();
 
-        // Draw text
+        // Dessiner le texte
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
 
-        // Game Over title
+        // Titre Game Over
         glyphLayout.setText(titleFont, "GAME OVER");
         float titleX = (GameConfig.WORLD_WIDTH - glyphLayout.width) / 2;
         float titleY = GameConfig.WORLD_HEIGHT - 100f;
         titleFont.draw(game.batch, "GAME OVER", titleX, titleY);
 
-        // Final score
+        // Score final
         String scoreText = "Score: " + finalScore;
         glyphLayout.setText(scoreFont, scoreText);
         float scoreX = (GameConfig.WORLD_WIDTH - glyphLayout.width) / 2;
         float scoreY = GameConfig.WORLD_HEIGHT / 2 + 50f;
         scoreFont.draw(game.batch, scoreText, scoreX, scoreY);
 
-        // Button texts
+        // Textes des boutons
         glyphLayout.setText(buttonFont, "REJOUER");
         float replayTextX = replayButton.x + (replayButton.width - glyphLayout.width) / 2;
         float replayTextY = replayButton.y + (replayButton.height + glyphLayout.height) / 2;

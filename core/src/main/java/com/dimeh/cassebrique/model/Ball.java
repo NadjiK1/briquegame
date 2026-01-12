@@ -17,7 +17,7 @@ public class Ball extends GameObject {
         active = false;
         velocityX = 0;
         velocityY = 0;
-        // Position will be set by GameScreen to follow paddle initially
+        // La position sera définie par GameScreen pour suivre la raquette initialement
     }
 
     public void launch() {
@@ -33,7 +33,7 @@ public class Ball extends GameObject {
         bounds.x += velocityX * delta;
         bounds.y += velocityY * delta;
 
-        // Wall collisions
+        // Collisions avec les murs
         if (bounds.x < 0) {
             bounds.x = 0;
             velocityX = -velocityX;
