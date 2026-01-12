@@ -67,7 +67,3 @@ briquegame/
 | **Cycle de Vie** | ✅ | Menu -> Jeu -> Game Over -> Menu. |
 | **Interface (HUD)** | ✅ | Affichage du Score et des Vies en temps réel. |
 
-## 5. Comment exporter ce fichier ?
-Ce fichier est au format **Markdown (.md)**. Pour l'avoir en PDF ou Word :
-1.  **PDF** : Dans VS Code, faites `Clic Droit` dans ce fichier -> `Markdown to PDF` (si vous avez une extension installée) ou copiez le texte dans un convertisseur en ligne.
-2.  **Word** : Copiez-collez simplement le contenu (le rendu visuel sera conservé) dans Microsoft Word ou Google Docs.
