@@ -37,3 +37,5 @@ Le **Gradle Wrapper** est inclus, ce qui permet d’exécuter les commandes Grad
 
 La plupart des tâches qui ne sont pas spécifiques à un seul module peuvent être exécutées en ajoutant le préfixe `nomDuProjet:`.  
 Par exemple, `core:clean` supprime uniquement le dossier `build` du module **core**.
+IMPORTANT ::
+Alors Nous avons Malheuresement pas compris l'utilités au départ de github donc nous avions tout fait sur ma machine a la maison car Benguesmia-chadly Mehdi n'en possédait pas une machine et s'en est achetés que récemment pour noel donc les commits ne sont pas fiables par rapport au travaille effectués.Merci et désoler du dérangement occasionée.
