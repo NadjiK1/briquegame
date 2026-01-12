@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="37">
+ <objectgroup id="3" name="brick">
+  <object id="17" x="154.178" y="341.886" width="26.3246" height="25.5933"/>
+  <object id="23" x="317.245" y="340.058" width="26.3246" height="25.5933"/>
+  <object id="28" x="475.923" y="341.52" width="26.3246" height="25.5933"/>
+  <object id="33" x="630.946" y="344.445" width="26.3246" height="25.5933"/>
+ </objectgroup>
+ <objectgroup id="4" name="brick2">
+  <properties>
+   <property name="type" type="int" value="2"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="5" name="brick3">
+  <properties>
+   <property name="type" type="int" value="3"/>
+  </properties>
+  <object id="11" x="125.66" y="287.043" width="81.1674" height="29.2495"/>
+  <object id="13" x="96.4106" y="314.83" width="30.712" height="79.7049"/>
+  <object id="14" x="127.123" y="393.072" width="80.4361" height="29.2495"/>
+  <object id="16" x="206.828" y="314.83" width="25.5933" height="79.7049"/>
+  <object id="19" x="288.727" y="285.215" width="81.1674" height="29.2495"/>
+  <object id="20" x="259.477" y="313.002" width="30.712" height="79.7049"/>
+  <object id="21" x="290.189" y="391.244" width="80.4361" height="29.2495"/>
+  <object id="22" x="369.893" y="313.002" width="25.5933" height="79.7049"/>
+  <object id="24" x="447.405" y="286.677" width="81.1674" height="29.2495"/>
+  <object id="25" x="418.155" y="314.464" width="30.712" height="79.7049"/>
+  <object id="26" x="448.867" y="392.707" width="80.4361" height="29.2495"/>
+  <object id="27" x="528.572" y="314.464" width="25.5933" height="79.7049"/>
+  <object id="29" x="602.427" y="289.602" width="81.1674" height="29.2495"/>
+  <object id="30" x="573.178" y="317.389" width="30.712" height="79.7049"/>
+  <object id="31" x="603.89" y="395.632" width="80.4361" height="29.2495"/>
+  <object id="32" x="683.594" y="317.389" width="25.5933" height="79.7049"/>
+  <object id="34" x="100.067" y="447.184" width="607.658" height="24.1308"/>
+ </objectgroup>
+</map>

@@ -81,9 +81,12 @@ public class GameScreen extends ScreenAdapter {
         Gdx.app.log("GameScreen", "Level Loaded.");
     }
 
+    // pour changer le nombre de niveau on change ici c'est > 3 si on met 4 par
+    // exemple il faudrait un niveau 4
     private void loadCurrentLevel() {
-        if (currentLevel > 2) {
-            currentLevel = 1; // Loop back to level 1 for now, or show Win Screen
+        if (currentLevel > 3) {
+            game.setScreen(new WinScreen(game, gameState.getScore()));
+            return;
         }
         loadLevel("maps/level" + currentLevel + ".tmx");
 
@@ -99,25 +102,30 @@ public class GameScreen extends ScreenAdapter {
         // Load the map
         try {
             tiledMap = new TmxMapLoader().load(mapPath);
+            // Parcourir TOUS les calques pour trouver des briques
+            for (MapLayer layer : tiledMap.getLayers()) {
+                MapObjects objects = layer.getObjects();
+                if (objects.getCount() > 0) {
+                    for (MapObject object : objects) {
+                        if (object instanceof RectangleMapObject) {
+                            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+                            int type = 1;
 
-            // Parse bricks from "bricks" object layer
-            MapLayer brickLayer = tiledMap.getLayers().get("bricks");
-            if (brickLayer != null) {
-                MapObjects objects = brickLayer.getObjects();
-                for (MapObject object : objects) {
-                    if (object instanceof RectangleMapObject) {
-                        Rectangle rect = ((RectangleMapObject) object).getRectangle();
-                        // Tiled coordinates need to be scaled if unit scale is different,
-                        // but here we assume Tiled pixels match world units (1:1) or adaptation is
-                        // needed.
-                        // Also Tiled Y-axis is usually inverted relative to LibGDX if not careful,
-                        // but MapObjects are usually placed in world coordinates.
-                        // Let's create the Brick.
-                        bricks.add(new Brick(rect.x, rect.y, rect.width, rect.height));
+                            // 1. Chercher "type" sur l'objet
+                            if (object.getProperties().containsKey("type")) {
+                                Object val = object.getProperties().get("type");
+                                type = Integer.parseInt(val.toString());
+                            }
+                            // 2. Sinon, chercher "type" sur le calque (fallback)
+                            else if (layer.getProperties().containsKey("type")) {
+                                Object val = layer.getProperties().get("type");
+                                type = Integer.parseInt(val.toString());
+                            }
+
+                            bricks.add(new Brick(rect.x, rect.y, rect.width, rect.height, type));
+                        }
                     }
                 }
-            } else {
-                Gdx.app.error("GameScreen", "No 'bricks' layer found in map: " + mapPath);
             }
         } catch (Exception e) {
             Gdx.app.error("GameScreen", "Could not load map: " + mapPath, e);
@@ -204,16 +212,16 @@ public class GameScreen extends ScreenAdapter {
         if (Intersector.overlaps(ball.getBounds(), paddle.getBounds())) {
             Rectangle ballRect = ball.getBounds();
             Rectangle paddleRect = paddle.getBounds();
-            
+
             // Calculate overlap to determine collision side
             float ballCenterX = ballRect.x + ballRect.width / 2;
             float ballCenterY = ballRect.y + ballRect.height / 2;
             float paddleCenterX = paddleRect.x + paddleRect.width / 2;
             float paddleCenterY = paddleRect.y + paddleRect.height / 2;
-            
+
             float overlapX = (ballRect.width / 2 + paddleRect.width / 2) - Math.abs(ballCenterX - paddleCenterX);
             float overlapY = (ballRect.height / 2 + paddleRect.height / 2) - Math.abs(ballCenterY - paddleCenterY);
-            
+
             if (overlapY < overlapX) {
                 // Top/bottom collision - reverse Y velocity
                 if (ball.getVelocityY() < 0) {
@@ -229,7 +237,7 @@ public class GameScreen extends ScreenAdapter {
                     ball.setPosition(paddle.getX() + paddle.getWidth() + 1, ball.getY());
                 }
             }
-            
+
             // Add english based on hit position
             float hitFactor = (ballCenterX - paddleCenterX) / (paddle.getWidth() / 2);
             ball.setVelocityX(ball.getVelocityX() + hitFactor * 100);
@@ -241,8 +249,12 @@ public class GameScreen extends ScreenAdapter {
             Brick brick = iter.next();
             if (Intersector.overlaps(ball.getBounds(), brick.getBounds())) {
                 ball.reverseY();
-                iter.remove(); // Destroy brick
-                gameState.addBrickScore(); // Add score!
+                brick.toucher(); // On enlève une vie
+
+                if (brick.isDestroyed()) {
+                    iter.remove(); // Détruire brique si 0 vies
+                    gameState.addBrickScore();
+                }
                 break; // Only hit one brick per frame to prevent weird physics for now
             }
         }
@@ -289,8 +301,15 @@ public class GameScreen extends ScreenAdapter {
         shapeRenderer.rect(ball.getX(), ball.getY(), ball.getWidth(), ball.getHeight());
 
         // Draw Bricks
-        shapeRenderer.setColor(Color.RED);
         for (Brick brick : bricks) {
+            // Couleur basée sur les VIES restantes (Visual feedback !)
+            if (brick.getVies() >= 3) {
+                shapeRenderer.setColor(Color.GREEN);
+            } else if (brick.getVies() == 2) {
+                shapeRenderer.setColor(Color.ORANGE);
+            } else {
+                shapeRenderer.setColor(Color.RED);
+            }
             shapeRenderer.rect(brick.getX(), brick.getY(), brick.getWidth(), brick.getHeight());
         }
 

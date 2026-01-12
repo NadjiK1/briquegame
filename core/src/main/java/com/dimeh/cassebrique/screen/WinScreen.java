@@ -15,10 +15,9 @@ import com.dimeh.cassebrique.CasseBriqueMain;
 import com.dimeh.cassebrique.config.GameConfig;
 
 /**
- * Ecran de Parti perdu en montrant le score final avec les options de rejouer
- * et de retourner au menu.
+ * Écran de victoire affiché après avoir terminé tous les niveaux.
  */
-public class GameOverScreen extends ScreenAdapter {
+public class WinScreen extends ScreenAdapter {
 
     private final CasseBriqueMain game;
     private final int finalScore;
@@ -27,6 +26,7 @@ public class GameOverScreen extends ScreenAdapter {
     private Viewport viewport;
     private ShapeRenderer shapeRenderer;
     private BitmapFont titleFont;
+    private BitmapFont subtitleFont;
     private BitmapFont scoreFont;
     private BitmapFont buttonFont;
     private GlyphLayout glyphLayout;
@@ -36,7 +36,10 @@ public class GameOverScreen extends ScreenAdapter {
     private boolean replayHovered;
     private boolean menuHovered;
 
-    public GameOverScreen(CasseBriqueMain game, int finalScore) {
+    // Animation
+    private float animationTimer = 0f;
+
+    public WinScreen(CasseBriqueMain game, int finalScore) {
         this.game = game;
         this.finalScore = finalScore;
     }
@@ -49,7 +52,11 @@ public class GameOverScreen extends ScreenAdapter {
 
         titleFont = new BitmapFont();
         titleFont.getData().setScale(4f);
-        titleFont.setColor(Color.RED);
+        titleFont.setColor(Color.GOLD);
+
+        subtitleFont = new BitmapFont();
+        subtitleFont.getData().setScale(2f);
+        subtitleFont.setColor(Color.WHITE);
 
         scoreFont = new BitmapFont();
         scoreFont.getData().setScale(2.5f);
@@ -61,13 +68,13 @@ public class GameOverScreen extends ScreenAdapter {
 
         glyphLayout = new GlyphLayout();
 
-        // Bouttons
+        // Boutons
         float buttonWidth = 180f;
         float buttonHeight = 50f;
         float spacing = 30f;
         float totalWidth = buttonWidth * 2 + spacing;
         float startX = (GameConfig.WORLD_WIDTH - totalWidth) / 2;
-        float buttonY = GameConfig.WORLD_HEIGHT / 2 - 100f;
+        float buttonY = GameConfig.WORLD_HEIGHT / 2 - 120f;
 
         replayButton = new Rectangle(startX, buttonY, buttonWidth, buttonHeight);
         menuButton = new Rectangle(startX + buttonWidth + spacing, buttonY, buttonWidth, buttonHeight);
@@ -75,13 +82,14 @@ public class GameOverScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        animationTimer += delta;
         update();
         if (game.getScreen() != this)
-            return; // Stop if screen changed/disposed
+            return;
         draw();
     }
 
-    // Reusable vector
+    // Vecteur réutilisable
     private final com.badlogic.gdx.math.Vector3 tempVector = new com.badlogic.gdx.math.Vector3();
 
     private void update() {
@@ -94,26 +102,22 @@ public class GameOverScreen extends ScreenAdapter {
         menuHovered = menuButton.contains(mouseX, mouseY);
 
         if (Gdx.input.justTouched()) {
-            Gdx.app.log("GameOverScreen", "Click at: " + mouseX + ", " + mouseY);
-            Gdx.app.log("GameOverScreen", "Replay Bounds: " + replayButton.toString());
-            Gdx.app.log("GameOverScreen", "Menu Bounds: " + menuButton.toString());
-
             if (replayHovered) {
-                Gdx.app.log("GameOverScreen", "Replay Clicked");
+                Gdx.app.log("WinScreen", "Replay Clicked");
                 try {
                     game.setScreen(new GameScreen(game));
                     dispose();
                 } catch (Throwable e) {
-                    Gdx.app.error("GameOverScreen", "Failed to switch to GameScreen", e);
+                    Gdx.app.error("WinScreen", "Failed to switch to GameScreen", e);
                     e.printStackTrace();
                 }
             } else if (menuHovered) {
-                Gdx.app.log("GameOverScreen", "Menu Clicked");
+                Gdx.app.log("WinScreen", "Menu Clicked");
                 try {
                     game.setScreen(new MenuScreen(game));
                     dispose();
                 } catch (Throwable e) {
-                    Gdx.app.error("GameOverScreen", "Failed to switch to MenuScreen", e);
+                    Gdx.app.error("WinScreen", "Failed to switch to MenuScreen", e);
                     e.printStackTrace();
                 }
             }
@@ -121,13 +125,18 @@ public class GameOverScreen extends ScreenAdapter {
     }
 
     private void draw() {
-        ScreenUtils.clear(0.15f, 0.05f, 0.05f, 1f);
+        // Fond vert foncé pour la victoire
+        ScreenUtils.clear(0.05f, 0.15f, 0.1f, 1f);
         viewport.apply();
 
         shapeRenderer.setProjectionMatrix(camera.combined);
+
+        // Dessiner des étoiles animées en arrière-plan
+        drawStars();
+
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        // Replay button
+        // Bouton rejouer
         if (replayHovered) {
             shapeRenderer.setColor(0.2f, 0.7f, 0.3f, 1f);
         } else {
@@ -135,7 +144,7 @@ public class GameOverScreen extends ScreenAdapter {
         }
         shapeRenderer.rect(replayButton.x, replayButton.y, replayButton.width, replayButton.height);
 
-        // Menu button
+        // Bouton menu
         if (menuHovered) {
             shapeRenderer.setColor(0.5f, 0.5f, 0.6f, 1f);
         } else {
@@ -145,37 +154,40 @@ public class GameOverScreen extends ScreenAdapter {
 
         shapeRenderer.end();
 
-        // Draw button borders
+        // Dessiner les bordures des boutons
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        // Draw actual hitbox in RED to debug
-        shapeRenderer.setColor(Color.RED);
-        shapeRenderer.rect(replayButton.x, replayButton.y, replayButton.width, replayButton.height);
-        shapeRenderer.rect(menuButton.x, menuButton.y, menuButton.width, menuButton.height);
-
-        // Draw nicer border on top
         shapeRenderer.setColor(Color.WHITE);
         shapeRenderer.rect(replayButton.x, replayButton.y, replayButton.width, replayButton.height);
         shapeRenderer.rect(menuButton.x, menuButton.y, menuButton.width, menuButton.height);
         shapeRenderer.end();
 
-        // Draw text
+        // Dessiner le texte
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
 
-        // Game Over title
-        glyphLayout.setText(titleFont, "GAME OVER");
+        // Titre VICTOIRE avec effet de pulsation
+        float pulse = 1f + 0.1f * (float) Math.sin(animationTimer * 3);
+        titleFont.getData().setScale(4f * pulse);
+        glyphLayout.setText(titleFont, "VICTOIRE !");
         float titleX = (GameConfig.WORLD_WIDTH - glyphLayout.width) / 2;
-        float titleY = GameConfig.WORLD_HEIGHT - 100f;
-        titleFont.draw(game.batch, "GAME OVER", titleX, titleY);
+        float titleY = GameConfig.WORLD_HEIGHT - 80f;
+        titleFont.draw(game.batch, "VICTOIRE !", titleX, titleY);
+        titleFont.getData().setScale(4f); // Restaurer
 
-        // Final score
-        String scoreText = "Score: " + finalScore;
+        // Sous-titre
+        glyphLayout.setText(subtitleFont, "Félicitations ! Tous les niveaux sont terminés !");
+        float subtitleX = (GameConfig.WORLD_WIDTH - glyphLayout.width) / 2;
+        float subtitleY = GameConfig.WORLD_HEIGHT - 150f;
+        subtitleFont.draw(game.batch, "Félicitations ! Tous les niveaux sont terminés !", subtitleX, subtitleY);
+
+        // Score final
+        String scoreText = "Score Final: " + finalScore;
         glyphLayout.setText(scoreFont, scoreText);
         float scoreX = (GameConfig.WORLD_WIDTH - glyphLayout.width) / 2;
-        float scoreY = GameConfig.WORLD_HEIGHT / 2 + 50f;
+        float scoreY = GameConfig.WORLD_HEIGHT / 2 + 30f;
         scoreFont.draw(game.batch, scoreText, scoreX, scoreY);
 
-        // Button texts
+        // Textes des boutons
         glyphLayout.setText(buttonFont, "REJOUER");
         float replayTextX = replayButton.x + (replayButton.width - glyphLayout.width) / 2;
         float replayTextY = replayButton.y + (replayButton.height + glyphLayout.height) / 2;
@@ -189,6 +201,21 @@ public class GameOverScreen extends ScreenAdapter {
         game.batch.end();
     }
 
+    private void drawStars() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.GOLD);
+
+        // Dessiner quelques étoiles fixes avec effet de scintillement
+        for (int i = 0; i < 20; i++) {
+            float x = (i * 137) % GameConfig.WORLD_WIDTH;
+            float y = (i * 89) % GameConfig.WORLD_HEIGHT;
+            float size = 2f + (float) Math.sin(animationTimer * 2 + i) * 1f;
+            shapeRenderer.circle(x, y, size);
+        }
+
+        shapeRenderer.end();
+    }
+
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, true);
@@ -198,6 +225,7 @@ public class GameOverScreen extends ScreenAdapter {
     public void dispose() {
         shapeRenderer.dispose();
         titleFont.dispose();
+        subtitleFont.dispose();
         scoreFont.dispose();
         buttonFont.dispose();
     }

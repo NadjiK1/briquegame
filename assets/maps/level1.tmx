@@ -1,20 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="50" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="16">
- <objectgroup id="2" name="bricks">
-  <!-- Row 1 -->
-  <object id="1" x="64" y="64" width="64" height="32"/>
-  <object id="2" x="160" y="64" width="64" height="32"/>
-  <object id="3" x="256" y="64" width="64" height="32"/>
-  <object id="4" x="352" y="64" width="64" height="32"/>
-  <object id="5" x="448" y="64" width="64" height="32"/>
-  
-  <!-- Row 2 -->
-  <object id="6" x="64" y="128" width="64" height="32"/>
-  <object id="7" x="160" y="128" width="64" height="32"/>
-  <object id="8" x="256" y="128" width="64" height="32"/>
-  <object id="9" x="352" y="128" width="64" height="32"/>
-  <object id="10" x="448" y="128" width="64" height="32"/>
-  
-
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="50" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="107">
+ <objectgroup id="7" name="Brique 3">
+  <properties>
+   <property name="type " type="int" value="3"/>
+  </properties>
+  <object id="70" x="145.333" y="31.3333" width="62" height="66.6667"/>
+  <object id="76" x="499.667" y="32" width="62" height="66.6667"/>
+  <object id="85" x="500.167" y="143" width="62" height="66.6667"/>
+  <object id="80" x="145.833" y="143.667" width="62" height="66.6667"/>
+ </objectgroup>
+ <objectgroup id="9" name="Brique 1">
+  <object id="72" x="254.667" y="32" width="51.3333" height="33.3333"/>
+  <object id="73" x="256.667" y="79.3333" width="48.6667" height="34.6667"/>
+  <object id="82" x="255.167" y="176.333" width="51.3333" height="33.3333"/>
+  <object id="83" x="257.167" y="127.667" width="48.6667" height="34.6667"/>
+  <object id="78" x="401" y="32.6667" width="51.3333" height="33.3333"/>
+  <object id="79" x="401.666" y="80" width="48.6667" height="34.6667"/>
+  <object id="87" x="401.5" y="175.667" width="51.3333" height="33.3333"/>
+  <object id="88" x="402.166" y="127" width="48.6667" height="34.6667"/>
+ </objectgroup>
+ <objectgroup id="8" name="Brique 2">
+  <properties>
+   <property name="type" type="int" value="2"/>
+  </properties>
+  <object id="75" x="336" y="33.3333" width="33.3333" height="77.3333"/>
+  <object id="77" x="464.333" y="32.6667" width="20" height="65.3333"/>
+  <object id="81" x="223.167" y="144.333" width="20" height="65.3333"/>
+  <object id="84" x="336.5" y="131" width="33.3333" height="77.3333"/>
+  <object id="86" x="464.833" y="143.667" width="20" height="65.3333"/>
+  <object id="71" x="222.667" y="32" width="20" height="65.3333"/>
  </objectgroup>
 </map>
