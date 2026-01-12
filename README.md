@@ -41,5 +41,4 @@ Le **Gradle Wrapper** est inclus, ce qui permet d’exécuter les commandes Grad
 
 La plupart des tâches qui ne sont pas spécifiques à un seul module peuvent être exécutées en ajoutant le préfixe `nomDuProjet:`.  
 Par exemple, `core:clean` supprime uniquement le dossier `build` du module **core**.
-
-
+Lien Github: https://github.com/NadjiK1/briquegame.git
